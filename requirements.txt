@@ -1,0 +1,6 @@
+flask
+gunicorn
+python-dotenv
+llama-index
+llama-index-embeddings-huggingface
+llama-index-llms-huggingface

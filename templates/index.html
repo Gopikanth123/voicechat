@@ -1,0 +1,427 @@
+<!DOCTYPE html>  
+<html lang="en">  
+
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>TAJ HOTEL CHATBOT</title>  
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">  
+    <style>  
+        :root {  
+            --primary-color: #007bff; /* Default blue */  
+            --bot-message-bg: #f0f2f5; /* Light Gray */  
+            --user-message-bg: #007bff; /* User Blue */  
+            --user-message-text: #fff; /* User Message White */  
+            --accent-color: #6a0dad; /* Default Purple */  
+            --background-color: #fff; /* Default Background White */  
+            --shadow-color: rgba(0, 0, 0, 0.2); /* Default Shadow */  
+            --input-bg: #f0f2f5; /* Default Input Background */  
+            --input-border: #ccc; /* Default Input Border */  
+        }  
+
+        /* Themes */  
+        .theme-calm-azure {  
+            --background-color: #E3F2FD;  
+            --bot-message-bg: #BBDEFB;  
+            --user-message-bg: #2196F3;  
+            --user-message-text: #FFFFFF;  
+            --input-bg: #FFFFFF;  
+            --input-border: #BDBDBD;  
+            --accent-color: #1976D2;  
+        }  
+
+        .theme-elegant-charcoal {  
+            --background-color: #263238;  
+            --bot-message-bg: #37474F;  
+            --user-message-bg: #FF5722;  
+            --user-message-text: #FFFFFF;  
+            --input-bg: #455A64;  
+            --input-border: #CFD8DC;  
+            --accent-color: #FF9800;  
+        }  
+
+        .theme-fresh-greenery {  
+            --background-color: #E8F5E9;  
+            --bot-message-bg: #C8E6C9;  
+            --user-message-bg: #4CAF50;  
+            --user-message-text: #FFFFFF;  
+            --input-bg: #FFFFFF;  
+            --input-border: #A5D6A7;  
+            --accent-color: #388E3C;  
+        }  
+
+        .theme-soft-lavender {  
+            --background-color: #F3E5F5;  
+            --bot-message-bg: #E1BEE7;  
+            --user-message-bg: #9C27B0;  
+            --user-message-text: #FFFFFF;  
+            --input-bg: #FFFFFF;  
+            --input-border: #D1C4E9;  
+            --accent-color: #7B1FA2;  
+        }  
+
+        .theme-bright-summer {  
+            --background-color: #FFEB3B;  
+            --bot-message-bg: #FFF9C4;  
+            --user-message-bg: #F44336;  
+            --user-message-text: #FFFFFF;  
+            --input-bg: #FFFFFF;  
+            --input-border: #FBC02D;  
+            --accent-color: #C62828;  
+        }  
+
+        * {  
+            margin: 0;  
+            padding: 0;  
+            box-sizing: border-box;  
+        }  
+
+        body {  
+            font-family: 'Roboto', sans-serif;  
+            background-color: var(--background-color);  
+            transition: background 0.5s ease;  
+            overflow: hidden; /* Prevent scroll on body */  
+        }  
+
+        .container {  
+            display: flex;  
+            flex-direction: column;  
+            height: 100vh;  
+            width: 100%;  
+            overflow: hidden; /* Prevent scroll on container */  
+        }  
+
+        /* Header */  
+        .header {  
+            background: var(--accent-color);  
+            color: #fff;  
+            font-size: 1.5rem;  
+            font-weight: 700;  
+            text-align: center;  
+            padding: 20px;  
+            box-shadow: 0 4px 8px var(--shadow-color);  
+            position: relative;  
+            z-index: 1000;  
+        }  
+
+        /* Chatbox */  
+        .chat-box {  
+            flex: 1;  
+            display: flex;  
+            flex-direction: column;  
+            overflow-y: auto;  
+            padding: 20px;  
+            background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);  
+            border-radius: 10px;  
+            margin: 20px;  
+            box-shadow: 0 4px 8px var(--shadow-color);  
+            position: relative;  
+            z-index: 10;  
+        }  
+
+        .message {  
+            max-width: 75%;  
+            padding: 12px 18px;  
+            border-radius: 20px;  
+            box-shadow: 0 3px 6px var(--shadow-color);  
+            margin-bottom: 10px;  
+            opacity: 0;  
+            animation: fadeIn 0.3s forwards; /* Changed to forwards for delay effect */  
+        }  
+
+        .user-message {  
+            align-self: flex-end;  
+            background: var(--user-message-bg);  
+            color: var(--user-message-text);  
+            border-radius: 15px 20px 20px 20px;  
+            animation: slideInRight 0.5s forwards; /* Sliding effect on user message */  
+        }  
+
+        .bot-message {  
+            align-self: flex-start;  
+            background: var(--bot-message-bg);  
+            color: #333;  
+            border-radius: 20px 15px 20px 20px;  
+            animation: slideInLeft 0.5s forwards; /* Sliding effect on bot message */  
+        }  
+
+        /* Footer */  
+        .footer {  
+            background: #ffffff;  
+            padding: 15px;  
+            display: flex;  
+            justify-content: center;  
+            align-items: center;  
+            box-shadow: 0 -4px 8px var(--shadow-color);  
+            position: relative;  
+            z-index: 1000;  
+        }  
+
+        .footer input[type="text"] {  
+            width: 75%;  
+            padding: 15px;  
+            border: 1px solid var(--input-border);  
+            border-radius: 20px;  
+            margin-right: 10px;  
+            box-shadow: 0 2px 4px var(--shadow-color);  
+            transition: border 0.3s, box-shadow 0.3s; /* Added shadow transition */  
+            background-color: var(--input-bg);  
+            outline: none;  
+        }  
+
+        .footer input[type="text"]:focus {  
+            border-color: var(--accent-color);  
+            box-shadow: 0 0 10px var(--accent-color);  
+        }  
+
+        button {  
+            background: var(--accent-color);  
+            color: #fff;  
+            border: none;  
+            padding: 10px 20px;  
+            border-radius: 20px;  
+            font-size: 1rem;  
+            cursor: pointer;  
+            box-shadow: 0 4px 10px var(--shadow-color);  
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;  
+        }  
+
+        button:hover {  
+            background: #4b0082;  
+            transform: scale(1.05);  
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Shadow effect on hover */  
+        }  
+
+        /* Settings */  
+        .settings {  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            padding: 10px;  
+            background: #f0f2f5;  
+            box-shadow: 0 2px 5px var(--shadow-color);  
+            position: relative;  
+            z-index: 1000;  
+        }  
+
+        .color-picker,  
+        .theme-toggle {  
+            display: flex;  
+            align-items: center;  
+            position:relative;  
+        }  
+
+        .color-circle {  
+            width: 20px;  
+            height: 20px;  
+            border-radius: 50%;  
+            margin: 0 5px;  
+            cursor: pointer;  
+            box-shadow: 0 2px 5px var(--shadow-color);  
+            transition: transform 0.3s; /* Adding circle hover effect */  
+        }  
+
+        .color-circle:hover {  
+            transform: scale(1.2); /* Scale up on hover */  
+        }  
+
+        /* Animations */  
+        @keyframes fadeIn {  
+            from {  
+                opacity: 0;  
+                transform: translateY(20px);  
+            }  
+
+            to {  
+                opacity: 1;  
+                transform: translateY(0);  
+            }  
+        }  
+
+        @keyframes slideInRight {  
+            from {  
+                opacity: 0;  
+                transform: translateX(100%);  
+            }  
+            to {  
+                opacity: 1;  
+                transform: translateX(0);  
+            }  
+        }  
+
+        @keyframes slideInLeft {  
+            from {  
+                opacity: 0;  
+                transform: translateX(-100%);  
+            }  
+            to {  
+                opacity: 1;  
+                transform: translateX(0);  
+            }  
+        }  
+
+        /* Background animation */  
+        @keyframes backgroundAnimate {  
+            0% {  
+                background-color: rgba(255, 255, 255, 0.05);  
+            }  
+            50% {  
+                background-color: rgba(255, 255, 255, 0.1);  
+            }  
+            100% {  
+                background-color: rgba(255, 255, 255, 0.05);  
+            }  
+        }  
+
+        /* VFX related styles */  
+        .vfx {  
+            position: absolute;  
+            top: 0;  
+            left: 0;  
+            width: 100%;  
+            height: 100%;  
+            pointer-events: none;  
+            animation: backgroundAnimate 5s infinite; /* Continuously animate background */  
+            z-index: 0; /* Background layer */  
+        }  
+    </style>  
+</head>  
+
+<body>  
+    <div class="vfx"></div> <!-- Background effects -->  
+
+    <div class="container">  
+        <!-- Settings -->  
+        <div class="settings">  
+            <div class="theme-toggle">  
+                <label for="theme-select">Select Theme:</label>  
+                <select id="theme-select">  
+                    <option value="default">Default</option>  
+                    <option value="calm-azure">Calm Azure</option>  
+                    <option value="elegant-charcoal">Elegant Charcoal</option>  
+                    <option value="fresh-greenery">Fresh Greenery</option>  
+                    <option value="soft-lavender">Soft Lavender</option>  
+                    <option value="bright-summer">Bright Summer</option>  
+                </select>  
+            </div>  
+            <div class="color-picker">  
+                <label>Accent Color:</label>  
+                <div class="color-circle" style="background-color: #6a0dad;" onclick="changeColor('#6a0dad')"></div>  
+                <div class="color-circle" style="background-color: #ff4500;" onclick="changeColor('#ff4500')"></div>  
+                <div class="color-circle" style="background-color: #007bff;" onclick="changeColor('#007bff')"></div>  
+                <div class="color-circle" style="background-color: #28a745;" onclick="changeColor('#28a745')"></div>  
+            </div>  
+        </div>  
+
+        <!-- Header -->  
+        <div class="header">TAJ HOTEL CHATBOT</div>  
+
+        <!-- Chatbox -->  
+        <div class="chat-box" id="chat-box"></div>  
+
+        <!-- Footer -->  
+        <div class="footer">  
+            <input type="text" id="user-input" placeholder="Type your message..." />  
+            <button id="send-btn">Send</button>  
+            <button id="voice-btn">🎤 Start Voice Input</button>  
+        </div>  
+    </div>  
+
+    <script>  
+        const chatBox = document.getElementById('chat-box');  
+        const voiceBtn = document.getElementById('voice-btn');  
+        const sendBtn = document.getElementById('send-btn');  
+        const userInput = document.getElementById('user-input');  
+        const themeSelect = document.getElementById('theme-select');  
+
+        // Add message to chatbox with visual effects  
+        function addMessage(sender, text) {  
+            const msgDiv = document.createElement('div');  
+            msgDiv.classList.add('message', sender);  
+            msgDiv.textContent = text;  
+            chatBox.appendChild(msgDiv);  
+            chatBox.scrollTop = chatBox.scrollHeight;  
+        }  
+
+        // Speech Recognition Setup  
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();  
+        recognition.lang = 'en-US';  
+
+        voiceBtn.addEventListener('click', () => recognition.start());  
+
+        recognition.addEventListener('result', (e) => {  
+            const transcript = e.results[0][0].transcript;  
+            addMessage('user-message', transcript);  
+            sendUserMessage(transcript);  
+        });  
+
+        // Function to change the accent color  
+        function changeColor(color) {  
+            document.documentElement.style.setProperty('--accent-color', color);  
+        }  
+
+        // Function to change the theme  
+        function changeTheme(theme) {  
+            document.documentElement.classList.remove('theme-calm-azure', 'theme-elegant-charcoal', 'theme-fresh-greenery', 'theme-soft-lavender', 'theme-bright-summer');  
+            if (theme !== 'default') {  
+                document.documentElement.classList.add('theme-' + theme);  
+            }  
+        }  
+
+        // Send user input to backend (placeholder URL)  
+        function sendUserMessage(message) {  
+            fetch('/chat', {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json',  
+                },  
+                body: JSON.stringify({ message: message }),  
+            })  
+                .then(response => response.json())  
+                .then(data => {  
+                    const botResponse = data.response;  
+                    addMessage('bot-message', botResponse);  
+                    speakResponse(botResponse);  
+                })  
+                .catch(error => {  
+                    console.error("Error:", error);  
+                    addMessage('bot-message', "Sorry, I couldn't process that.");  
+                });  
+        }  
+
+        // Text-to-Speech Function  
+        function speakResponse(text) {  
+            const utterance = new SpeechSynthesisUtterance(text);  
+            utterance.lang = 'en-US';  
+            window.speechSynthesis.speak(utterance);  
+        }
+                // Event listeners for buttons  
+                sendBtn.addEventListener('click', () => {  
+                    const message = userInput.value.trim();  
+                    if (message) {  
+                        addMessage('user-message', message);  
+                        sendUserMessage(message);  
+                        userInput.value = ''; // Clear input field after sending  
+                    }  
+                });  
+        
+                // Handle pressing 'Enter' key for sending messages  
+                userInput.addEventListener('keypress', (e) => {  
+                    if (e.key === 'Enter') {  
+                        sendBtn.click(); // Trigger button click  
+                    }  
+                });  
+        
+                // Update theme when selected from dropdown  
+                themeSelect.addEventListener('change', (e) => {  
+                    changeTheme(e.target.value);  
+                });  
+        
+                recognition.addEventListener('error', (event) => {  
+                    console.error("Speech recognition error", event);  
+                });  
+        
+            </script>  
+        </body>  
+        
+        </html>
